@@ -2,14 +2,14 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "kruthikagowda15/myappd"
+        DOCKER_IMAGE = "kruthikagowda15/docker1"
     }
 
     stages {
 
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/Kruthikagowda15/docker.git'
+                git 'https://github.com/Kruthikagowda15/docker1.git'
             }
         }
 
