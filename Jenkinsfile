@@ -14,24 +14,27 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Login to Docker Hub') {
             steps {
-                bat 'docker build -t %DOCKER_IMAGE%:latest .'
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKERHUB_USER',
+                    passwordVariable: 'DOCKERHUB_TOKEN'
+                )]) {
+                    powershell '''
+                        $env:DOCKERHUB_TOKEN | docker login -u $env:DOCKERHUB_USER --password-stdin
+
+                        if ($LASTEXITCODE -ne 0) {
+                            exit $LASTEXITCODE
+                        }
+                    '''
+                }
             }
         }
 
-        stage('Login to Docker Hub') {
+        stage('Build Docker Image') {
             steps {
-                withCredentials([string(
-                    credentialsId: 'dockerhub-creds',
-                    variable: 'DOCKER_PAT'
-                )]) {
-                    bat '''
-                    @echo off
-                    echo %DOCKER_PAT%|docker login -u kruthikagowda15 --password-stdin
-                    if errorlevel 1 exit /b 1
-                    '''
-                }
+                bat 'docker build -t %DOCKER_IMAGE%:latest .'
             }
         }
 
