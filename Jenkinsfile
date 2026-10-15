@@ -17,7 +17,7 @@ pipeline {
         stage('Login to Docker Hub') {
             steps {
                 withCredentials([string(
-                    credentialsId: 'dockerhub-creds1',
+                    credentialsId: 'dockerhub-creds',
                     variable: 'DOCKER_PAT'
                 )]) {
                     powershell '''
