@@ -11,50 +11,29 @@ pipeline {
             steps {
                 git branch: 'main',
                     url: 'https://github.com/Kruthikagowda15/docker1.git'
-<<<<<<< HEAD
             }
         }
 
         stage('Login to Docker Hub') {
             steps {
-                withCredentials([string(
+                withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-creds',
-                    variable: 'DOCKER_PAT'
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PAT'
                 )]) {
                     powershell '''
-                        $env:DOCKER_PAT | docker login -u kruthikagowda15 --password-stdin
-
+                        $env:DOCKER_PAT | docker login -u $env:DOCKER_USER --password-stdin
                         if ($LASTEXITCODE -ne 0) {
-                            exit $LASTEXITCODE
+                            exit 1
                         }
                     '''
                 }
-=======
->>>>>>> a812f09 (Update app and Jenkinsfile)
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 bat 'docker build -t %DOCKER_IMAGE%:latest .'
-<<<<<<< HEAD
-=======
-            }
-        }
-
-        stage('Login to Docker Hub') {
-            steps {
-                withCredentials([string(
-                    credentialsId: 'dockerhub-PAT',
-                    variable: 'DOCKER_PAT'
-                )]) {
-                    bat '''
-                    @echo off
-                    echo %DOCKER_PAT%|docker login -u kruthikagowda15 --password-stdin
-                    if errorlevel 1 exit /b 1
-                    '''
-                }
->>>>>>> a812f09 (Update app and Jenkinsfile)
             }
         }
 
@@ -69,10 +48,6 @@ pipeline {
         success {
             echo 'Docker image built and pushed successfully.'
         }
-<<<<<<< HEAD
-
-=======
->>>>>>> a812f09 (Update app and Jenkinsfile)
         failure {
             echo 'Pipeline failed. Check Console Output.'
         }
