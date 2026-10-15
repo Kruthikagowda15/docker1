@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
 
@@ -14,26 +13,24 @@ pipeline {
             }
         }
 
-        stage('Login to Docker Hub') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-creds',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PAT'
-                )]) {
-                    powershell '''
-                        $env:DOCKER_PAT | docker login -u $env:DOCKER_USER --password-stdin
-                        if ($LASTEXITCODE -ne 0) {
-                            exit 1
-                        }
-                    '''
-                }
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 bat 'docker build -t %DOCKER_IMAGE%:latest .'
+            }
+        }
+
+        stage('Login to Docker Hub') {
+            steps {
+                withCredentials([string(
+                    credentialsId: 'dockerhub-PAT',
+                    variable: 'DOCKER_PAT'
+                )]) {
+                    bat '''
+                    @echo off
+                    echo %DOCKER_PAT%|docker login -u kruthikagowda15 --password-stdin
+                   if errorlevel 1 exit /b 1
+                    '''
+                }
             }
         }
 
