@@ -3,15 +3,16 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "akshatha29/app-image"
-        DOCKER_TAG = "latest"
+        DOCKER_IMAGE = "kruthikagowda15/docker1"
+        DOCKER_TAG = "v1"
     }
 
     stages {
 
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/akshathavishal2901/final.git'
+                git branch: 'main',
+                    url: 'https://github.com/Kruthikagowda15/docker1.git'
             }
         }
 
@@ -52,7 +53,7 @@ pipeline {
         }
 
         failure {
-            echo 'Pipeline failed'
+            echo 'Pipeline failed. Check Console Output for details.'
         }
     }
 }
