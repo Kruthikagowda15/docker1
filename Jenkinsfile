@@ -4,7 +4,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "kruthikagowda15/docker1"
-        DOCKER_TAG = "v1"
+        DOCKER_TAG = "latest"
     }
 
     stages {
