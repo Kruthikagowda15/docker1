@@ -3,14 +3,15 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "kruthikagowda15/docker1"
-        DOCKER_TAG = "v1"
+        DOCKER_IMAGE = "akshatha29/app-image"
+        DOCKER_TAG = "latest"
     }
 
     stages {
-        stage('Checkout Code') {
+
+        stage('Clone Repository') {
             steps {
-                checkout scm
+                git 'https://github.com/akshathavishal2901/final.git'
             }
         }
 
@@ -21,7 +22,13 @@ pipeline {
                     usernameVariable: 'DOCKERHUB_USER',
                     passwordVariable: 'DOCKERHUB_TOKEN'
                 )]) {
-                    bat 'echo %DOCKERHUB_TOKEN% | docker login -u %DOCKERHUB_USER% --password-stdin'
+                    powershell '''
+                        $env:DOCKERHUB_TOKEN | docker login -u $env:DOCKERHUB_USER --password-stdin
+
+                        if ($LASTEXITCODE -ne 0) {
+                            exit $LASTEXITCODE
+                        }
+                    '''
                 }
             }
         }
@@ -36,6 +43,16 @@ pipeline {
             steps {
                 bat 'docker push %DOCKER_IMAGE%:%DOCKER_TAG%'
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Image successfully built and pushed to Docker Hub'
+        }
+
+        failure {
+            echo 'Pipeline failed'
         }
     }
 }
