@@ -16,13 +16,12 @@ pipeline {
 
         stage('Login to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(
+                withCredentials([string(
                     credentialsId: 'dockerhub-creds',
-                    usernameVariable: 'DOCKERHUB_USER',
-                    passwordVariable: 'DOCKERHUB_TOKEN'
+                    variable: 'DOCKER_PAT'
                 )]) {
                     powershell '''
-                        $env:DOCKERHUB_TOKEN | docker login -u $env:DOCKERHUB_USER --password-stdin
+                        $env:DOCKER_PAT | docker login -u kruthikagowda15 --password-stdin
 
                         if ($LASTEXITCODE -ne 0) {
                             exit $LASTEXITCODE
@@ -49,6 +48,7 @@ pipeline {
         success {
             echo 'Docker image built and pushed successfully.'
         }
+
         failure {
             echo 'Pipeline failed. Check Console Output.'
         }
